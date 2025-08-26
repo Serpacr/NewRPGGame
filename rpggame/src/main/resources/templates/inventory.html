@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventário - RPG Game</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #f39c12;
+        }
+        
+        .back-btn {
+            background: #95a5a6;
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: #7f8c8d;
+            transform: translateY(-2px);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .section h2 {
+            color: #f39c12;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            border-bottom: 2px solid #f39c12;
+            padding-bottom: 0.5rem;
+        }
+        
+        .item-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            transition: all 0.3s ease;
+        }
+        
+        .item-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+        }
+        
+        .item-card.equipped {
+            border-color: #27ae60;
+            background: rgba(39, 174, 96, 0.2);
+        }
+        
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .item-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .item-rarity {
+            padding: 0.3rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .rarity-common { background: #95a5a6; }
+        .rarity-uncommon { background: #27ae60; }
+        .rarity-rare { background: #3498db; }
+        .rarity-epic { background: #9b59b6; }
+        .rarity-legendary { background: #f39c12; }
+        
+        .item-stats {
+            font-size: 0.9rem;
+            color: #bdc3c7;
+            margin: 0.5rem 0;
+        }
+        
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .action-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .action-btn.equip {
+            background: #27ae60;
+        }
+        
+        .action-btn.equip:hover {
+            background: #229954;
+        }
+        
+        .action-btn.unequip {
+            background: #e74c3c;
+        }
+        
+        .action-btn.unequip:hover {
+            background: #c0392b;
+        }
+        
+        .empty-inventory {
+            text-align: center;
+            color: #bdc3c7;
+            font-style: italic;
+            padding: 2rem;
+        }
+        
+        .player-summary {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .player-summary h3 {
+            color: #f39c12;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #f39c12;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #bdc3c7;
+        }
+        
+        @media (max-width: 768px) {
+            .inventory-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎒 Inventário</h1>
+        <a href="/game" class="back-btn">← Voltar ao Jogo</a>
+    </div>
+    
+    <div class="container">
+        <div class="player-summary">
+            <h3>📊 Resumo do Personagem</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" th:text="${player.name}">Nome</div>
+                    <div class="stat-label">Nome</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" th:text="${player.getCharacterClass()}">Classe</div>
+                    <div class="stat-label">Classe</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" th:text="${player.level}">1</div>
+                    <div class="stat-label">Nível</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" th:text="${player.health + '/' + player.maxHealth}">100/100</div>
+                    <div class="stat-label">HP</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" th:text="${player.mana + '/' + player.maxMana}">50/50</div>
+                    <div class="stat-label">Mana</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" th:text="${player.attack}">15</div>
+                    <div class="stat-label">Ataque</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" th:text="${player.defense}">25</div>
+                    <div class="stat-label">Defesa</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" th:text="${player.speed}">8</div>
+                    <div class="stat-label">Velocidade</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="inventory-grid">
+            <div class="section">
+                <h2>🎒 Inventário</h2>
+                <div th:if="${#lists.isEmpty(player.inventory)}" class="empty-inventory">
+                    <p>Seu inventário está vazio.</p>
+                    <p>Derrote inimigos para encontrar itens!</p>
+                </div>
+                
+                <div th:each="item, iterStat : ${player.inventory}" class="item-card">
+                    <div class="item-header">
+                        <div class="item-name" th:text="${item.displayName}">Item</div>
+                        <div class="item-rarity" th:class="'item-rarity rarity-' + ${#strings.toLowerCase(item.rarity)}" 
+                             th:text="${item.rarity}">RARIDADE</div>
+                    </div>
+                    
+                    <div class="item-stats">
+                        <div th:if="${item.attackBonus > 0}">⚔️ Ataque: +<span th:text="${item.attackBonus}">0</span></div>
+                        <div th:if="${item.defenseBonus > 0}">🛡️ Defesa: +<span th:text="${item.defenseBonus}">0</span></div>
+                        <div th:if="${item.healthBonus > 0}">❤️ HP: +<span th:text="${item.healthBonus}">0</span></div>
+                        <div th:if="${item.manaBonus > 0}">🔮 Mana: +<span th:text="${item.manaBonus}">0</span></div>
+                        <div th:if="${item.speedBonus > 0}">⚡ Velocidade: +<span th:text="${item.speedBonus}">0</span></div>
+                        <div th:if="${item.specialEffect}" style="color: #f39c12; font-weight: bold;">
+                            ✨ <span th:text="${item.specialEffect}">Efeito Especial</span>
+                        </div>
+                    </div>
+                    
+                    <div class="item-actions">
+                        <button class="action-btn equip" th:onclick="'equipItem(' + iterStat.index + ')'">
+                            🎯 Equipar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>⚔️ Equipamentos</h2>
+                <div th:if="${#lists.isEmpty(player.equippedItems)}" class="empty-inventory">
+                    <p>Nenhum item equipado.</p>
+                    <p>Equipe itens do seu inventário!</p>
+                </div>
+                
+                <div th:each="item, iterStat : ${player.equippedItems}" class="item-card equipped">
+                    <div class="item-header">
+                        <div class="item-name" th:text="${item.displayName}">Item</div>
+                        <div class="item-rarity" th:class="'item-rarity rarity-' + ${#strings.toLowerCase(item.rarity)}" 
+                             th:text="${item.rarity}">RARIDADE</div>
+                    </div>
+                    
+                    <div class="item-stats">
+                        <div th:if="${item.attackBonus > 0}">⚔️ Ataque: +<span th:text="${item.attackBonus}">0</span></div>
+                        <div th:if="${item.defenseBonus > 0}">🛡️ Defesa: +<span th:text="${item.defenseBonus}">0</span></div>
+                        <div th:if="${item.healthBonus > 0}">❤️ HP: +<span th:text="${item.healthBonus}">0</span></div>
+                        <div th:if="${item.manaBonus > 0}">🔮 Mana: +<span th:text="${item.manaBonus}">0</span></div>
+                        <div th:if="${item.speedBonus > 0}">⚡ Velocidade: +<span th:text="${item.speedBonus}">0</span></div>
+                        <div th:if="${item.specialEffect}" style="color: #f39c12; font-weight: bold;">
+                            ✨ <span th:text="${item.specialEffect}">Efeito Especial</span>
+                        </div>
+                    </div>
+                    
+                    <div class="item-actions">
+                        <button class="action-btn unequip" th:onclick="'unequipItem(' + iterStat.index + ')'">
+                            🚫 Desequipar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function equipItem(itemIndex) {
+            fetch('/equip-item', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'itemIndex=' + itemIndex
+            })
+            .then(response => response.text())
+            .then(result => {
+                alert(result);
+                location.reload(); // Recarregar para atualizar inventário
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao equipar item!');
+            });
+        }
+        
+        function unequipItem(itemIndex) {
+            fetch('/unequip-item', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'itemIndex=' + itemIndex
+            })
+            .then(response => response.text())
+            .then(result => {
+                alert(result);
+                location.reload(); // Recarregar para atualizar inventário
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao desequipar item!');
+            });
+        }
+    </script>
+</body>
+</html>

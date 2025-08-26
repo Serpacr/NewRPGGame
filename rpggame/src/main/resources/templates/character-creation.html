@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criação de Personagem - RPG Game</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #bdc3c7;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .class-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .class-option {
+            border: 3px solid #ecf0f1;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .class-option:hover {
+            border-color: #3498db;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .class-option.selected {
+            border-color: #e74c3c;
+            background: #fff5f5;
+        }
+        
+        .class-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .class-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .class-stats {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            line-height: 1.4;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .submit-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .back-btn {
+            background: #95a5a6;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎭 Criação de Personagem</h1>
+        
+        <form action="/start-game" method="post" id="characterForm">
+            <div class="form-group">
+                <label for="characterName">Nome do Herói:</label>
+                <input type="text" id="characterName" name="characterName" required 
+                       placeholder="Digite o nome do seu personagem">
+            </div>
+            
+            <div class="form-group">
+                <label>Escolha sua Classe:</label>
+                <div class="class-selection">
+                    <div class="class-option" data-class="tank">
+                        <div class="class-icon">🛡️</div>
+                        <div class="class-name">Tank</div>
+                        <div class="class-stats">
+                            HP: 150 | Mana: 50<br>
+                            Ataque: 15 | Defesa: 25<br>
+                            Velocidade: 8
+                        </div>
+                    </div>
+                    
+                    <div class="class-option" data-class="warrior">
+                        <div class="class-icon">⚔️</div>
+                        <div class="class-name">Warrior</div>
+                        <div class="class-stats">
+                            HP: 120 | Mana: 40<br>
+                            Ataque: 25 | Defesa: 15<br>
+                            Velocidade: 12
+                        </div>
+                    </div>
+                    
+                    <div class="class-option" data-class="archer">
+                        <div class="class-icon">🏹</div>
+                        <div class="class-name">Archer</div>
+                        <div class="class-stats">
+                            HP: 90 | Mana: 60<br>
+                            Ataque: 20 | Defesa: 8<br>
+                            Velocidade: 18
+                        </div>
+                    </div>
+                    
+                    <div class="class-option" data-class="mage">
+                        <div class="class-icon">🔮</div>
+                        <div class="class-name">Mage</div>
+                        <div class="class-stats">
+                            HP: 80 | Mana: 120<br>
+                            Ataque: 12 | Defesa: 6<br>
+                            Velocidade: 10
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <input type="hidden" id="characterClass" name="characterClass" value="">
+            
+            <button type="submit" class="submit-btn" id="submitBtn" disabled>
+                🚀 INICIAR AVENTURA
+            </button>
+        </form>
+        
+        <a href="/" class="back-btn">← Voltar ao Menu</a>
+    </div>
+    
+    <script>
+        let selectedClass = '';
+        
+        document.querySelectorAll('.class-option').forEach(option => {
+            option.addEventListener('click', function() {
+                // Remover seleção anterior
+                document.querySelectorAll('.class-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // Selecionar nova opção
+                this.classList.add('selected');
+                selectedClass = this.dataset.class;
+                
+                // Atualizar campo hidden e habilitar botão
+                document.getElementById('characterClass').value = selectedClass;
+                document.getElementById('submitBtn').disabled = false;
+            });
+        });
+        
+        document.getElementById('characterForm').addEventListener('submit', function(e) {
+            if (!selectedClass) {
+                e.preventDefault();
+                alert('Por favor, escolha uma classe!');
+            }
+        });
+    </script>
+</body>
+</html>

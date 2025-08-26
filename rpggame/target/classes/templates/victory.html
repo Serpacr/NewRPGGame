@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vitória! - RPG Game</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            max-width: 800px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .victory-icon {
+            font-size: 8rem;
+            margin-bottom: 2rem;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-30px);
+            }
+            60% {
+                transform: translateY(-15px);
+            }
+        }
+        
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #f39c12;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #ecf0f1;
+        }
+        
+        .stats-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #f39c12;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            color: #bdc3c7;
+        }
+        
+        .achievement {
+            background: linear-gradient(45deg, #9b59b6, #8e44ad);
+            padding: 1rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+            border: 2px solid #f39c12;
+        }
+        
+        .achievement h3 {
+            color: #f39c12;
+            margin: 0 0 0.5rem 0;
+        }
+        
+        .achievement p {
+            margin: 0;
+            color: #ecf0f1;
+        }
+        
+        .action-buttons {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn.secondary {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+        }
+        
+        .btn.secondary:hover {
+            background: linear-gradient(45deg, #2980b9, #1f5f8b);
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f39c12;
+            animation: confetti-fall 3s linear infinite;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .victory-icon {
+                font-size: 5rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="victory-icon">🏆</div>
+        
+        <h1>VITÓRIA ÉPICA!</h1>
+        <p class="subtitle">Parabéns, herói! Você completou sua jornada e derrotou o boss final!</p>
+        
+        <div class="stats-container">
+            <h3>📊 Estatísticas Finais</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" th:text="${player.name}">Nome</div>
+                    <div class="stat-label">Herói</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" th:text="${player.getCharacterClass()}">Classe</div>
+                    <div class="stat-label">Classe</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" th:text="${player.level}">25</div>
+                    <div class="stat-label">Nível Final</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" th:text="${player.experience}">1000</div>
+                    <div class="stat-label">Experiência Total</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="achievement">
+            <h3>🏅 Conquista Desbloqueada!</h3>
+            <p>🎮 "Mestre do RPG" - Complete todas as 25 ondas e derrote o boss final</p>
+            <p>⚔️ "Colecionador" - Colete itens de todas as raridades</p>
+            <p>🌟 "Lendário" - Alcançe o nível máximo</p>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="/" class="btn">🏠 Menu Principal</a>
+            <a href="/restart" class="btn secondary">🔄 Nova Aventura</a>
+        </div>
+    </div>
+    
+    <script>
+        // Criar confete animado
+        function createConfetti() {
+            const colors = ['#f39c12', '#e74c3c', '#9b59b6', '#3498db', '#27ae60'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 3 + 's';
+                    confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    
+                    document.body.appendChild(confetti);
+                    
+                    // Remover confete após animação
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }, i * 100);
+            }
+        }
+        
+        // Iniciar confete quando a página carregar
+        window.addEventListener('load', createConfetti);
+        
+        // Repetir confete a cada 5 segundos
+        setInterval(createConfetti, 5000);
+    </script>
+</body>
+</html>
